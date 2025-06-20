@@ -9,7 +9,7 @@ import datetime
 import spacy
 import os
 
-# ✅ Safe spaCy model loading for Streamlit Cloud
+# ✅ SAFE spaCy loading (handles missing model in cloud)
 try:
     nlp = spacy.load("en_core_web_sm")
 except:
