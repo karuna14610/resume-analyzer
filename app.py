@@ -5,15 +5,9 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import matplotlib.pyplot as plt
 import datetime
-import subprocess
 import spacy
 
-# 🔧 Safe spaCy model load (auto-download if needed)
-try:
-    nlp = spacy.load("en_core_web_sm")
-except OSError:
-    subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
-    nlp = spacy.load("en_core_web_sm")
+nlp = spacy.load("en_core_web_sm")  # spaCy model already installed via requirements.txt
 
 # Session login
 if "logged_in" not in st.session_state:
@@ -26,7 +20,7 @@ if not st.session_state.logged_in:
         st.session_state.username = username
     st.stop()
 
-# Title
+# Streamlit setup
 st.set_page_config(page_title="Resume Analyzer", layout="centered")
 st.title("📄 AI Resume Analyzer")
 st.write("Upload your resume PDF to get smart feedback on skills, score, and JD match!")
@@ -43,11 +37,11 @@ if uploaded_file is not None:
             pdf_reader = PdfReader(uploaded_file)
             text = "".join(page.extract_text() for page in pdf_reader.pages)
 
-            # Preview text
+            # Preview resume text
             st.subheader("🔎 Extracted Resume Text")
             st.write(text[:1000] + "...")
 
-            # Entity extraction
+            # NLP entity extraction
             st.subheader("🧠 NLP Entities")
             doc = nlp(text)
             for ent in doc.ents:
@@ -104,7 +98,7 @@ Missing Skills: {', '.join([s for s in known_skills if s not in found_skills])}
 """
             st.download_button("📥 Download Report", report, file_name="resume_report.txt")
 
-# JD match
+# JD match section
 st.subheader("📥 Optional: Upload Job Description")
 jd_file = st.file_uploader("Upload Job Description (.txt)", type=["txt"])
 if jd_file is not None and uploaded_file is not None:
@@ -127,6 +121,10 @@ if jd_file is not None and uploaded_file is not None:
     st.write("→ Include keywords from the job description in your resume.")
     st.write("→ Mention tools, skills, and experience relevant to the job.")
 
+
+
+           
+   
 
             
             
