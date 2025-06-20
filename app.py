@@ -1,4 +1,5 @@
-# app.py – Karuna's Resume Analyzer (Final Version)
+# app.py – Karuna's Resume Analyzer (Streamlit Cloud Ready)
+
 import streamlit as st
 from PyPDF2 import PdfReader
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -6,13 +7,20 @@ from sklearn.metrics.pairwise import cosine_similarity
 import matplotlib.pyplot as plt
 import datetime
 import spacy
+import os
 
-nlp = spacy.load("en_core_web_sm")  # spaCy model already installed via requirements.txt
+# ✅ Safe spaCy model loading for Streamlit Cloud
+try:
+    nlp = spacy.load("en_core_web_sm")
+except:
+    os.system("python -m spacy download en_core_web_sm")
+    nlp = spacy.load("en_core_web_sm")
 
 # Session login
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 if not st.session_state.logged_in:
+    st.set_page_config(page_title="Resume Analyzer", layout="centered")
     st.title("🔐 Login")
     username = st.text_input("Enter your email to continue")
     if st.button("Login") and username:
@@ -20,12 +28,11 @@ if not st.session_state.logged_in:
         st.session_state.username = username
     st.stop()
 
-# Streamlit setup
-st.set_page_config(page_title="Resume Analyzer", layout="centered")
+# Main interface
 st.title("📄 AI Resume Analyzer")
 st.write("Upload your resume PDF to get smart feedback on skills, score, and JD match!")
 
-# Upload Resume
+# Upload resume
 uploaded_file = st.file_uploader("📤 Upload Your Resume (PDF Only)", type=["pdf"])
 
 if uploaded_file is not None:
@@ -33,11 +40,11 @@ if uploaded_file is not None:
 
     if st.button("🔍 Analyze Resume"):
         with st.spinner("Reading and analyzing your resume..."):
-            # Extract text from PDF
+            # Extract PDF text
             pdf_reader = PdfReader(uploaded_file)
             text = "".join(page.extract_text() for page in pdf_reader.pages)
 
-            # Preview resume text
+            # Preview extracted text
             st.subheader("🔎 Extracted Resume Text")
             st.write(text[:1000] + "...")
 
@@ -120,15 +127,3 @@ if jd_file is not None and uploaded_file is not None:
     st.subheader("🛠 JD Match Suggestions")
     st.write("→ Include keywords from the job description in your resume.")
     st.write("→ Mention tools, skills, and experience relevant to the job.")
-
-
-
-           
-   
-
-            
-            
-
-
-           
-   
