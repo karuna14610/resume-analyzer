@@ -1,18 +1,19 @@
 # app.py – Karuna's Resume Analyzer (Final Version)
-
-
-            
-            
 import streamlit as st
 from PyPDF2 import PdfReader
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import matplotlib.pyplot as plt
 import datetime
+import subprocess
 import spacy
 
-# Load spaCy model
-nlp = spacy.load("en_core_web_sm")
+# 🔧 Safe spaCy model load (auto-download if needed)
+try:
+    nlp = spacy.load("en_core_web_sm")
+except OSError:
+    subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
+    nlp = spacy.load("en_core_web_sm")
 
 # Session login
 if "logged_in" not in st.session_state:
@@ -126,3 +127,10 @@ if jd_file is not None and uploaded_file is not None:
     st.write("→ Include keywords from the job description in your resume.")
     st.write("→ Mention tools, skills, and experience relevant to the job.")
 
+
+            
+            
+
+
+           
+   
